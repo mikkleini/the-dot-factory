@@ -28,6 +28,7 @@ namespace TheDotFactory
             cbxPaddingHoriz.DataSource = Enum.GetNames(typeof(OutputConfiguration.PaddingRemoval));
             cbxPaddingVert.DataSource = Enum.GetNames(typeof(OutputConfiguration.PaddingRemoval));
             cbxCommentStyle.DataSource = Enum.GetNames(typeof(OutputConfiguration.CommentStyle));
+            cbxIndentStyle.DataSource = Enum.GetNames(typeof(OutputConfiguration.IndentStyle));
             cbxBitLayout.DataSource = Enum.GetNames(typeof(OutputConfiguration.BitLayout));
             cbxByteOrder.DataSource = Enum.GetNames(typeof(OutputConfiguration.ByteOrder));
             cbxByteFormat.DataSource = Enum.GetNames(typeof(OutputConfiguration.ByteFormat));
@@ -58,6 +59,7 @@ namespace TheDotFactory
             cbxPaddingHoriz.SelectedIndex = (int)outputConfig.paddingRemovalHorizontal;
             cbxPaddingVert.SelectedIndex = (int)outputConfig.paddingRemovalVertical;
             cbxCommentStyle.SelectedIndex = (int)outputConfig.commentStyle;
+            cbxIndentStyle.SelectedIndex = (int)outputConfig.indentStyle;
             cbxBitLayout.SelectedIndex = (int)outputConfig.bitLayout;
             cbxByteOrder.SelectedIndex = (int)outputConfig.byteOrder;
             cbxByteFormat.SelectedIndex = (int)outputConfig.byteFormat;
@@ -68,9 +70,9 @@ namespace TheDotFactory
             cbxImgWidthFormat.SelectedIndex = (int)outputConfig.descImgWidth;
             cbxImgHeightFormat.SelectedIndex = (int)outputConfig.descImgHeight;
 
-
             // text boxes
             cbxByteLeadingChar.Text = outputConfig.byteLeadingString;
+            txtNumIndentSpaces.Text = outputConfig.numIndentSpaces.ToString();
             txtSpacePixels.Text = outputConfig.spaceGenerationPixels.ToString();
             txtLookupBlocksNewAfterCharCount.Text = outputConfig.lookupBlocksNewAfterCharCount.ToString();
             cbxOutputConfigurations.Text = outputConfig.displayName;
@@ -107,6 +109,7 @@ namespace TheDotFactory
             outputConfig.paddingRemovalHorizontal = (OutputConfiguration.PaddingRemoval)Enum.Parse(typeof(OutputConfiguration.PaddingRemoval), cbxPaddingHoriz.Text);
             outputConfig.paddingRemovalVertical = (OutputConfiguration.PaddingRemoval)Enum.Parse(typeof(OutputConfiguration.PaddingRemoval), cbxPaddingVert.Text);
             outputConfig.commentStyle = (OutputConfiguration.CommentStyle)Enum.Parse(typeof(OutputConfiguration.CommentStyle), cbxCommentStyle.Text);
+            outputConfig.indentStyle = (OutputConfiguration.IndentStyle)Enum.Parse(typeof(OutputConfiguration.IndentStyle), cbxIndentStyle.Text);
             outputConfig.bitLayout = (OutputConfiguration.BitLayout)Enum.Parse(typeof(OutputConfiguration.BitLayout), cbxBitLayout.Text);
             outputConfig.byteOrder = (OutputConfiguration.ByteOrder)Enum.Parse(typeof(OutputConfiguration.ByteOrder), cbxByteOrder.Text);
             outputConfig.byteFormat = (OutputConfiguration.ByteFormat)Enum.Parse(typeof(OutputConfiguration.ByteFormat), cbxByteFormat.Text);
@@ -119,6 +122,7 @@ namespace TheDotFactory
 
             // text boxes
             outputConfig.byteLeadingString = cbxByteLeadingChar.Text;
+            outputConfig.numIndentSpaces = (int)System.Convert.ToInt32(txtNumIndentSpaces.Text, 10);
             outputConfig.spaceGenerationPixels = (int)System.Convert.ToInt32(txtSpacePixels.Text, 10);
             outputConfig.lookupBlocksNewAfterCharCount = System.Convert.ToInt32(txtLookupBlocksNewAfterCharCount.Text, 10);
             outputConfig.varNfBitmaps = txtVarNfBitmaps.Text;

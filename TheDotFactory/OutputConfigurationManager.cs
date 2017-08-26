@@ -40,6 +40,13 @@ namespace TheDotFactory
             Cpp              // C++ style - //
         }
 
+        // Indent style
+        public enum IndentStyle
+        {
+            Tabs,
+            Spaces
+        }
+
         // Bit Layout
         public enum BitLayout
         {
@@ -108,6 +115,10 @@ namespace TheDotFactory
         public bool commentCharDescriptor = true;
         public CommentStyle commentStyle = CommentStyle.Cpp;
         public String bmpVisualizerChar = "#";
+
+        // whitespaces
+        public IndentStyle indentStyle = IndentStyle.Tabs;
+        public int numIndentSpaces = 2;
 
         // rotation
         public Rotation rotation = Rotation.RotateZero;

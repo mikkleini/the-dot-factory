@@ -29,10 +29,6 @@ namespace TheDotFactory
     public partial class MainForm : Form
     {
         // formatting strings
-        public const string HeaderStringColumnStart = "\t0b";
-        public const string HeaderStringColumnMid = ", 0b";
-        public const string BitString1 = "1";
-        public const string BitString0 = "0";
         private static String nl = Environment.NewLine;
 
         // application version
@@ -136,6 +132,9 @@ namespace TheDotFactory
         string m_commentEndString = "";
         string m_commentBlockMiddleString = "";
         string m_commentBlockEndString = "";
+
+        // indent string
+        string m_indentString = "";
 
         public MainForm()
         {
@@ -267,7 +266,7 @@ namespace TheDotFactory
             }
 
             // update comment strings
-            updateCommentStrings();
+            updateCommentAndIndentStrings();
 
             // set checkbox stuff
             populateTextInsertCheckbox();
@@ -967,13 +966,13 @@ namespace TheDotFactory
                     // one line per row
                     for (int row = 0; row != data.Length; ++row)
                     {
-                        resultString.Append("\t").Append(data[row]).Append(visualizer[row]).Append(nl);
+                        resultString.Append(m_indentString).Append(data[row]).Append(visualizer[row]).Append(nl);
                     }
                 }
                 else if (m_outputConfig.lineWrap == OutputConfiguration.LineWrap.AtBitmap)
                 {
                     // one line per bitmap
-                    resultString.Append("\t");
+                    resultString.Append(m_indentString);
                     for (int row = 0; row != data.Length; ++row)
                     {
                         resultString.Append(data[row]);
@@ -988,7 +987,7 @@ namespace TheDotFactory
                 // output the visualizer
                 for (int row = 0; row != visualizer.Length; ++row)
                 {
-                    resultString.Append("\t").Append(visualizer[row]).Append(nl);
+                    resultString.Append(m_indentString).Append(visualizer[row]).Append(nl);
                 }
 
                 // output the data
@@ -997,13 +996,13 @@ namespace TheDotFactory
                     // one line per row
                     for (int row = 0; row != data.Length; ++row)
                     {
-                        resultString.Append("\t").Append(data[row]).Append(nl);
+                        resultString.Append(m_indentString).Append(data[row]).Append(nl);
                     }
                 }
                 else if (m_outputConfig.lineWrap == OutputConfiguration.LineWrap.AtBitmap)
                 {
                     // one line per bitmap
-                    resultString.Append("\t");
+                    resultString.Append(m_indentString);
                     for (int row = 0; row != data.Length; ++row)
                     {
                         resultString.Append(data[row]);
@@ -1433,7 +1432,7 @@ namespace TheDotFactory
                 foreach (CharacterDescriptorArrayBlock.Character character in block.characters)
                 {
                     // add character
-                    resultTextSource += String.Format("\t{{{0}{1}{2}}}, \t\t{3}{4}{5}" + nl,
+                    resultTextSource += String.Format(m_indentString + "{{ {0}{1}{2} }}, " + m_indentString.Repeat(2) + "{3}{4}{5}" + nl,
                                                     getCharacterDescString(m_outputConfig.descCharWidth, character.width),
                                                     getCharacterDescString(m_outputConfig.descCharHeight, character.height),
                                                     character.offset,
@@ -1479,7 +1478,7 @@ namespace TheDotFactory
                                                             lastChar = (CharacterDescriptorArrayBlock.Character)block.characters[block.characters.Count - 1];
 
                     // create current block description
-                    resultTextSource += String.Format("\t{{{0}, {1}, &{2}}}," + nl,
+                    resultTextSource += String.Format(m_indentString + "{ {{0}, {1}, &{2}} }," + nl,
                                                                 getCharacterDisplayString(firstChar.character),
                                                                 getCharacterDisplayString(lastChar.character),
                                                                 charDescArrayGetBlockName(fontInfo, characterBlockList.IndexOf(block), false, true));
@@ -1550,7 +1549,7 @@ namespace TheDotFactory
                 if (m_outputConfig.commentCharDescriptor)
                 {
                     // output character header
-                    resultTextSource += String.Format("\t{0}@{1} '{2}' ({3} pixels wide){4}" + nl,
+                    resultTextSource += String.Format(m_indentString + "{0}@{1} '{2}' ({3} pixels wide){4}" + nl,
                                                         m_commentStartString,
                                                         fontInfo.characters[charIdx].offsetInBytes,
                                                         fontInfo.characters[charIdx].character,
@@ -1607,11 +1606,11 @@ namespace TheDotFactory
             // the font character height
             string fontCharHeightString = "", spaceCharacterPixelWidthString = "";
             
-            // get character height sstring - displayed according to output configuration
+            // get character height string - displayed according to output configuration
             if (m_outputConfig.descFontHeight != OutputConfiguration.DescriptorFormat.DontDisplay)
             {
                 // convert the value
-                fontCharHeightString = String.Format("\t{0}, {1} Character height{2}" + nl,
+                fontCharHeightString = String.Format(m_indentString + "{0}, {1} Character height{2}" + nl,
                                               convertValueByDescriptorFormat(m_outputConfig.descFontHeight, fontInfo.charHeight),
                                               m_commentStartString,
                                               m_commentEndString);
@@ -1621,7 +1620,7 @@ namespace TheDotFactory
             if (!m_outputConfig.generateSpaceCharacterBitmap)
             {
                 // convert the value
-                spaceCharacterPixelWidthString = String.Format("\t{0}, {1} Width, in pixels, of space character{2}" + nl,
+                spaceCharacterPixelWidthString = String.Format(m_indentString + "{0}, {1} Width, in pixels, of space character{2}" + nl,
                                                                 m_outputConfig.spaceGenerationPixels,
                                                                 m_commentStartString,
                                                                 m_commentEndString);
@@ -1630,11 +1629,11 @@ namespace TheDotFactory
             // font info
             resultTextSource += String.Format("{2} =" + nl+"{{" + nl +
                                               "{3}" +
-                                              "\t{4}, {0} Start character{1}" + nl +
-                                              "\t{5}, {0} End character{1}" + nl +
+                                              m_indentString + "{4}, {0} Start character{1}" + nl +
+                                              m_indentString + "{5}, {0} End character{1}" + nl +
                                               "{6}" +
                                               "{7}" +
-                                              "\t{8}, {0} Character bitmap array{1}" + nl +
+                                              m_indentString + "{8}, {0} Character bitmap array{1}" + nl +
                                               "}};" + nl,
                                               m_commentStartString,
                                               m_commentEndString,
@@ -1668,19 +1667,19 @@ namespace TheDotFactory
             if (m_outputConfig.generateLookupBlocks)
             {
                 // add to string
-                descriptorString += String.Format("\t{0}, {1} Character block lookup{2}" + nl,
+                descriptorString += String.Format(m_indentString + "{0}, {1} Character block lookup{2}" + nl,
                                                     blockLookupGenerated ? getCharacterDescriptorArrayLookupDisplayString(fontInfo) : "NULL", 
                                                     m_commentStartString, m_commentEndString);
 
                 // add to string
-                descriptorString += String.Format("\t{0}, {1} Character descriptor array{2}" + nl,
+                descriptorString += String.Format(m_indentString + "{0}, {1} Character descriptor array{2}" + nl,
                                                     blockLookupGenerated ? "NULL" : getVariableNameFromExpression(String.Format(m_outputConfig.varNfCharInfo, getFontName(ref fontInfo.font))),
                                                     m_commentStartString, m_commentEndString);
             }
             else
             {
                 // add descriptor array
-                descriptorString += String.Format("\t{0}, {1} Character descriptor array{2}" + nl, 
+                descriptorString += String.Format(m_indentString + "{0}, {1} Character descriptor array{2}" + nl, 
                                                     getVariableNameFromExpression(String.Format(m_outputConfig.varNfCharInfo, getFontName(ref fontInfo.font))), 
                                                     m_commentStartString, m_commentEndString);
             }
@@ -2022,8 +2021,8 @@ namespace TheDotFactory
             about.Show();
         }
         
-        // set comment strings according to config
-        private void updateCommentStrings()
+        // set comment and indent strings according to config
+        private void updateCommentAndIndentStrings()
         {
             if (m_outputConfig.commentStyle == OutputConfiguration.CommentStyle.Cpp)
             {
@@ -2039,6 +2038,15 @@ namespace TheDotFactory
                 m_commentBlockMiddleString = "** ";
                 m_commentEndString = " */";
                 m_commentBlockEndString = "*/";
+            }
+
+            if (m_outputConfig.indentStyle == OutputConfiguration.IndentStyle.Tabs)
+            {
+                m_indentString = "\t";
+            }
+            else
+            {
+                m_indentString = " ".Repeat(m_outputConfig.numIndentSpaces);
             }
         }
         
@@ -2063,7 +2071,7 @@ namespace TheDotFactory
             cbxOutputConfiguration.SelectedIndex = selectedConfigurationIndex;
 
             // update comment strings according to conifg
-            updateCommentStrings();
+            updateCommentAndIndentStrings();
         }
 
         private void button4_Click(object sender, EventArgs e)
